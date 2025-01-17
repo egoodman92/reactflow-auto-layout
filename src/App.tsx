@@ -11,47 +11,50 @@ import ReactFlow, {
   useNodesState,
 } from "reactflow";
 
-import { jsonDecode } from "@/utils/base";
-
-import { ControlPanel } from "./components/ControlPanel";
 import { kEdgeTypes } from "./components/Edges";
 import { ColorfulMarkerDefinitions } from "./components/Edges/Marker";
-import { kNodeTypes } from "./components/Nodes";
-import { ReactflowInstance } from "./components/ReactflowInstance";
-import defaultWorkflow from "./data/data.json";
-import { workflow2reactflow } from "./data/convert";
-import { kDefaultLayoutConfig, ReactflowLayoutConfig } from "./layout/node";
-import { useAutoLayout } from "./layout/useAutoLayout";
 
 const EditWorkFlow = () => {
-  const [nodes, _setNodes, onNodesChange] = useNodesState([]);
-  const [edges, _setEdges, onEdgesChange] = useEdgesState([]);
-
-  const { layout, layouting } = useAutoLayout();
-
-  const layoutReactflow = async (
-    props: ReactflowLayoutConfig & {
-      workflow: string;
-    }
-  ) => {
-    if (layouting) {
-      return;
-    }
-    const input = props.workflow;
-    const data = jsonDecode(input);
-    if (!data) {
-      alert("Invalid workflow JSON data");
-      return;
-    }
-    const workflow = workflow2reactflow(data);
-    await layout({ ...workflow, ...props });
-  };
-
-  useEffect(() => {
-    const { nodes, edges } = workflow2reactflow(defaultWorkflow as any);
-    console.log({ nodes, edges });
-    layout({ nodes, edges, ...kDefaultLayoutConfig });
-  }, []);
+  const [nodes, _setNodes, onNodesChange] = useNodesState([
+    {
+      id: '1',
+      position: { x: 100, y: 100 },
+      data: { label: 'Node 1' },
+    },
+    {
+      id: '2',
+      position: { x: 300, y: 100 },
+      data: { label: 'Node 2' },
+    },
+    {
+      id: '3',
+      position: { x: 200, y: 200 },
+      data: { label: 'Node 3' },
+    },
+  ]);
+  
+  const [edges, _setEdges, onEdgesChange] = useEdgesState([
+    { 
+      id: 'e1-2', 
+      source: '1', 
+      target: '2', 
+      type: 'base',
+      data: {
+        sourcePort: { edges: 2 },
+        targetPort: { edges: 1 }
+      }
+    },
+    { 
+      id: 'e1-3', 
+      source: '1', 
+      target: '3', 
+      type: 'base',
+      data: {
+        sourcePort: { edges: 2 },
+        targetPort: { edges: 1 }
+      }
+    },
+  ]);
 
   return (
     <div
@@ -67,13 +70,11 @@ const EditWorkFlow = () => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
-        nodeTypes={kNodeTypes}
         edgeTypes={kEdgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
       >
         <Background id="0" color="#ccc" variant={BackgroundVariant.Dots} />
-        <ReactflowInstance />
         <Controls />
         <MiniMap
           pannable
@@ -82,7 +83,6 @@ const EditWorkFlow = () => {
           maskStrokeColor="black"
           maskStrokeWidth={10}
         />
-        <ControlPanel layoutReactflow={layoutReactflow} />
       </ReactFlow>
     </div>
   );
