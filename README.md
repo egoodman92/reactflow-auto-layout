@@ -1,4 +1,4 @@
-# ReactFlow Auto Layout Demo
+# Emmett ReactFlow Auto Layout Demo
 
 A demo showcasing the auto layout and Figma-like edge editing capabilities of [ReactFlow](https://reactflow.dev).
 
