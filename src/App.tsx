@@ -11,49 +11,27 @@ import ReactFlow, {
   useNodesState,
 } from "reactflow";
 
+
 import { kEdgeTypes } from "./components/Edges";
+import { kNodeTypes } from "./components/Nodes";
+import { ReactflowInstance } from "./components/ReactflowInstance";
+import defaultWorkflow from "./data/data.json";
+import { workflow2reactflow } from "./data/convert";
+import { kDefaultLayoutConfig, ReactflowLayoutConfig } from "./layout/node";
+import { useAutoLayout } from "./layout/useAutoLayout";
 
 const EditWorkFlow = () => {
-  const [nodes, _setNodes, onNodesChange] = useNodesState([
-    {
-      id: '1',
-      position: { x: 100, y: 100 },
-      data: { label: 'Node 1' },
-    },
-    {
-      id: '2',
-      position: { x: 300, y: 100 },
-      data: { label: 'Node 2' },
-    },
-    {
-      id: '3',
-      position: { x: 200, y: 200 },
-      data: { label: 'Node 3' },
-    },
-  ]);
-  
-  const [edges, _setEdges, onEdgesChange] = useEdgesState([
-    { 
-      id: 'e1-2', 
-      source: '1', 
-      target: '2', 
-      type: 'base',
-      data: {
-        sourcePort: { edges: 2 },
-        targetPort: { edges: 1 }
-      }
-    },
-    { 
-      id: 'e1-3', 
-      source: '1', 
-      target: '3', 
-      type: 'base',
-      data: {
-        sourcePort: { edges: 2 },
-        targetPort: { edges: 1 }
-      }
-    },
-  ]);
+  const [nodes, _setNodes, onNodesChange] = useNodesState([]);
+  const [edges, _setEdges, onEdgesChange] = useEdgesState([]);
+
+  const { layout, layouting } = useAutoLayout();
+
+
+  useEffect(() => {
+    const { nodes, edges } = workflow2reactflow(defaultWorkflow as any);
+    console.log({ nodes, edges });
+    layout({ nodes, edges, ...kDefaultLayoutConfig });
+  }, []);
 
   return (
     <div
@@ -68,11 +46,13 @@ const EditWorkFlow = () => {
       <ReactFlow
         nodes={nodes}
         edges={edges}
+        nodeTypes={kNodeTypes}
         edgeTypes={kEdgeTypes}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
       >
         <Background id="0" color="#ccc" variant={BackgroundVariant.Dots} />
+        <ReactflowInstance />
         <Controls />
         <MiniMap
           pannable
