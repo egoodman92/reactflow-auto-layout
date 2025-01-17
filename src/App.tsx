@@ -12,7 +12,6 @@ import ReactFlow, {
 } from "reactflow";
 
 import { kEdgeTypes } from "./components/Edges";
-import { ColorfulMarkerDefinitions } from "./components/Edges/Marker";
 
 const EditWorkFlow = () => {
   const [nodes, _setNodes, onNodesChange] = useNodesState([
@@ -66,7 +65,6 @@ const EditWorkFlow = () => {
         alignItems: "center",
       }}
     >
-      <ColorfulMarkerDefinitions />
       <ReactFlow
         nodes={nodes}
         edges={edges}
